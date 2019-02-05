@@ -635,6 +635,16 @@ var AuthenticationContext = (function () {
      * @param {tokenCallback} callback -  The callback provided by the caller. It will be called with token or error.
      */
     AuthenticationContext.prototype.acquireToken = function (resource, callback) {
+      const hasPermissionError = this._getItem(this.CONSTANTS.STORAGE.ERROR);
+
+        if (hasPermissionError) {
+          this.clearCache();
+
+          this.warn(hasPermissionError);
+          callback(hasPermissionError, null, hasPermissionError);
+          return;
+        }
+        
         if (this._isEmpty(resource)) {
             this.warn('resource is required');
             callback('resource is required', null, 'resource is required');
